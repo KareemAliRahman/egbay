@@ -1,0 +1,11 @@
+resolver: lts-16.31
+
+packages:
+- .
+
+allow-different-user: true
+
+extra-deps:
+  - morpheus-graphql-0.17.0
+  - morpheus-graphql-app-0.17.0@sha256:7561a7b371673417c8d7e4200ce2e79f01b5a8557547efdf341136459132d9cc,5425
+  - morpheus-graphql-core-0.17.0@sha256:4192366e2c23594a435364cc42832f2949620b8b116a69b57e59fde7111b1a0d,12939

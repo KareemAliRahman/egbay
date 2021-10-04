@@ -1,0 +1,14 @@
+*.hi
+*.o
+.hsenv*
+cabal-dev/
+.stack-work/
+.cabal-sandbox
+cabal.sandbox.config
+.DS_Store
+*.swp
+*~
+\#*
+egbay.cabal
+.devcontainer/build
+demo.*
