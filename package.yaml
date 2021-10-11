@@ -1,68 +1,70 @@
-name:    egbay
+name: egbay
 version: "0.0.0"
 
 dependencies:
-
-- base >=4.9.1.0 && <5
-- rio
-- text
-- unliftio
-- morpheus-graphql
-- scotty
+  - base >=4.9.1.0 && <5
+  - rio
+  - text
+  - unliftio
+  - morpheus-graphql
+  - opaleye
+  - postgresql-simple
+  - product-profunctors
+  - scotty
 
 default-extensions:
-- ApplicativeDo
-- BangPatterns
-- BinaryLiterals
-- ConstraintKinds
-- DataKinds
-- DefaultSignatures
-- DeriveDataTypeable
-- DeriveFoldable
-- DeriveFunctor
-- DeriveGeneric
-- DeriveTraversable
-- DeriveLift
-- DerivingStrategies
-- DoAndIfThenElse
-- DuplicateRecordFields
-- EmptyDataDecls
-- EmptyCase
-- ExistentialQuantification
-- FlexibleContexts
-- FlexibleInstances
-- FunctionalDependencies
-- GADTs
-- GeneralizedNewtypeDeriving
-- InstanceSigs
-- KindSignatures
-- LambdaCase
-- MultiParamTypeClasses
-- MultiWayIf
-- NamedFieldPuns
-- NoImplicitPrelude
-- OverloadedStrings
-- PartialTypeSignatures
-- PatternGuards
-- PolyKinds
-- RankNTypes
-- RecordWildCards
-- ScopedTypeVariables
-- StandaloneDeriving
-- TupleSections
-- TypeFamilies
-- TypeSynonymInstances
-- ViewPatterns
-- TypeApplications
+  - ApplicativeDo
+  - BangPatterns
+  - BinaryLiterals
+  - ConstraintKinds
+  - DataKinds
+  - DefaultSignatures
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveTraversable
+  - DeriveLift
+  - DerivingStrategies
+  - DoAndIfThenElse
+  - DuplicateRecordFields
+  - EmptyDataDecls
+  - EmptyCase
+  - ExistentialQuantification
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - InstanceSigs
+  - KindSignatures
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - PartialTypeSignatures
+  - PatternGuards
+  - PolyKinds
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TupleSections
+  - TypeFamilies
+  - TypeSynonymInstances
+  - ViewPatterns
+  - TypeApplications
 
 ghc-options:
-- -Wall
-- -Wcompat
-- -Widentities
-- -Wincomplete-record-updates
-- -Wincomplete-uni-patterns
-- -Wpartial-fields
-- -Wredundant-constraints
+  - -Wall
+  - -Wcompat
+  - -Widentities
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wpartial-fields
+  - -Wredundant-constraints
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
@@ -75,11 +77,11 @@ executables:
     main: Main.hs
     source-dirs: app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
     dependencies:
-    - egbay
+      - egbay
 
 # Test suite
 tests:
@@ -88,5 +90,5 @@ tests:
     source-dirs: test
     ghc-options: -Wall
     dependencies:
-    - egbay
-    - hspec >=2.0.0
+      - egbay
+      - hspec >=2.0.0
