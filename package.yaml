@@ -11,6 +11,8 @@ dependencies:
   - postgresql-simple
   - product-profunctors
   - scotty
+  - time
+  - time-compat
 
 default-extensions:
   - ApplicativeDo

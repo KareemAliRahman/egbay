@@ -9,6 +9,7 @@ import Data.Morpheus.Types
 import Data.Morpheus (interpreter)
 import Web.Scotty
 import Models (Category'(Category'))
+import DB (selectAllPersonsWithConn)
 -- import Web.Scotty.Trans (post, raw, body)
 
 resolveAd :: ResolverQ () IO Ad
@@ -17,11 +18,14 @@ resolveAd = lift $ pure $ Ad {title = "ad1", description = "desc1", category = C
 resolveCat :: ResolverQ () IO Category'
 resolveCat = lift $ pure $ Category' {name = "category"}
 
+resolvePersons :: ResolverQ () IO [Person]
+resolvePersons = lift $ selectAllPersonsWithConn
+
 rootResolver :: RootResolver IO () Query Undefined Undefined
 rootResolver =
   RootResolver
     {
-      queryResolver = Query {randomAd = resolveAd, randomCat = resolveCat}
+      queryResolver = Query {randomAd = resolveAd, randomCat = resolveCat, getPersons = resolvePersons}
     , mutationResolver = Undefined
     , subscriptionResolver = Undefined
     }

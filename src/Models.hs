@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Models (
 Category'(..)
 , Ad(..)
@@ -7,12 +9,13 @@ Category'(..)
 , Person'(..)
 , Person
 , PersonField
+, PersonArgs(..)
 , pPerson
 )
 where
 
 import RIO
-import RIO.Time
+import RIO.Time ( Day )
 import Data.Text as T
 import Data.Morpheus.Types (GQLType, QUERY)
 import RIO.Time (UTCTime)
@@ -22,16 +25,22 @@ import Opaleye.Internal.Table
 import Opaleye (Field, SqlDate, PGInt4, Column, Nullable, PGDate, PGText)
 import Opaleye.Field (FieldNullable)
 import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
+-- import Data.Time (Day)
+import Data.Data (Typeable)
+import Data.Morpheus.Kind (TYPE)
+
 
 data Query m = Query
   {
     randomAd :: m Ad
   , randomCat :: m Category'
+  -- , getPerson :: PersonArgs -> m Person
+  , getPersons :: m [Person]
   } deriving (Generic, GQLType)
 
 data Category' = Category'
   {
-    name :: Text 
+    name :: Text
   } deriving (Generic, GQLType)
 
 data Ad = Ad
@@ -46,10 +55,16 @@ data Person' a b c d = Person {
   id :: a
   , username :: b
   , personName :: c
-  , dob :: d 
-  }
+  , dob :: d
+  }deriving (Generic, GQLType, Show)
+
+data PersonArgs = PersonArgs
+  {
+    personId :: Int
+  } deriving (Generic, GQLType)
 
 type Person = Person' Int Text Text (Maybe Day)
+
 type PersonField = Person' (Field SqlInt4) (Field PGText) (Field PGText) (FieldNullable SqlDate)
 
 $(makeAdaptorAndInstance "pPerson" ''Person')

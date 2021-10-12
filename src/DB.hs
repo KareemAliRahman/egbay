@@ -1,16 +1,35 @@
+{-# LANGUAGE Arrows #-}
 module DB
 (
-  runInsertPerson
-) where
+  -- runInsertPerson,
+  runSelectAllPersons
+,selectAllPersonsWithConn) where
 
 import RIO
 import Database.PostgreSQL.Simple (Connection, connect, ConnectInfo(..))
 import Data.Profunctor.Product (p4, p8)
-import Opaleye (Table (Table), Field, SqlInt4, FieldNullable, SqlDate, tableField, SqlFloat8, SqlBool, Insert (Insert, iTable), toFields)
+import Opaleye (Table (Table), Field, SqlInt4, FieldNullable, SqlDate, tableField, SqlFloat8, SqlBool, Insert (Insert, iTable), toFields, runSelect)
 import Opaleye.SqlTypes (SqlInt4)
-import Models (PersonField, pPerson, Person, Person'(..))
-import RIO.Time
+import Models (PersonField, pPerson, Person, Person'(..), PersonArgs (PersonArgs, personId))
+import RIO.Time (Day)
 import Opaleye.Manipulation
+import Prelude (putStrLn)
+import Opaleye.Table (selectTable)
+import Opaleye
+    ( Field,
+      SqlInt4,
+      SqlDate,
+      SqlBool,
+      SqlFloat8,
+      Table(Table),
+      tableField,
+      toFields,
+      (.==),
+      restrict,
+      runSelect,
+      selectTable, required)
+import Opaleye as O
+import Control.Arrow (returnA)
 
 -- personTable :: Table (Field SqlInt4, Field Text, Field Text, FieldNullable SqlDate) (Field SqlInt4, Field Text, Field Text, FieldNullable SqlDate)
 -- personTable = Table "person" (p4 ( tableField "id"
@@ -19,7 +38,7 @@ import Opaleye.Manipulation
 --                                  , tableField "date"))
 
 personTable :: Table PersonField PersonField
-personTable = Table "person" (pPerson $ Person { id = tableField "id"
+personTable = Table "person" (pPerson $ Person { id = requiredTableField "id"
                                               , username = tableField "username"
                                               , personName = tableField "name"
                                               , dob = tableField "dob"})
@@ -45,26 +64,48 @@ getDbConn = connect ConnectInfo
   { connectHost = "localhost"
   , connectPort = 5432
   , connectDatabase = "egbay"
-  , connectUser = "egbay"
-  , connectPassword = "egbay"
+  , connectUser = "postgres"
+  , connectPassword = "postgres"
   }
 
 
 -- insertPerson :: Connection -> (Int, Text, Text, Maybe Day) -> IO ()
 insertPerson :: Connection -> Person -> IO ()
-insertPerson conn row = 
+insertPerson conn row =
   void $ runInsert_ conn ins
   where
-    ins = Insert 
-      { iTable = personTable  
+    ins = Insert
+      { iTable = personTable
       , iRows = [toFields row]
       , iReturning = rCount
       , iOnConflict = Nothing
       }
 
-runInsertPerson :: IO ()
-runInsertPerson = do
-  con <- getDbConn
-  -- let person = Person { id = 1, username = "firstusr", personName = "user", dob = Just $ fromGregorian 1988 07 04 }
-  let person = Person { id = 1, username = "firstusr", personName = "user", dob = Nothing}
-  insertPerson con person
+-- selectPerson :: Connection -> PersonArgs -> IO [PersonField]
+-- selectPerson conn PersonArgs {personId} =
+--   runSelect conn $ proc () -> do
+--     row@(id, _, _, _) <- selectTable personTable -< ()
+--     restrict -< (personId .== toFields id)
+--     returnA -< row
+
+selectAllPersons :: Connection -> IO [Person]
+selectAllPersons conn =
+  runSelect conn $ selectTable personTable
+
+selectAllPersonsWithConn :: IO [Person]
+selectAllPersonsWithConn = do
+  conn <- getDbConn
+  runSelect conn $ selectTable personTable
+
+runSelectAllPersons :: IO ()
+runSelectAllPersons = do
+  conn <- getDbConn
+  person <- selectAllPersons conn
+  putStrLn $ show person 
+
+-- runInsertPerson :: IO ()
+-- runInsertPerson = do
+--   con <- getDbConn
+--   let person = Person { id = 5, username = "secondUsr", personName = "user", dob = Just $ _a $ fromGregorian 1988 07 04 }
+--   -- let person = Person { id = 4, username = "firstusr", personName = "user", dob = Nothing}
+--   insertPerson con person

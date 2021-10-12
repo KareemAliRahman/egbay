@@ -47,6 +47,7 @@ VALUES
 ('admin','admin','1988-08-01'),
 ('manager', 'manager', '1988-08-02'),
 ('customer', 'customer', '1988-08-03');
+('kareem', 'kareem', '1988-08-03');
 
 INSERT INTO category (name, description, created_by)
 VALUES
