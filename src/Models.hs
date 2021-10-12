@@ -22,7 +22,7 @@ import RIO.Time (UTCTime)
 import Opaleye.SqlTypes (SqlInt4)
 import Data.Profunctor.Product (p4)
 import Opaleye.Internal.Table
-import Opaleye (Field, SqlDate, PGInt4, Column, Nullable, PGDate, PGText)
+import Opaleye (Field, SqlDate, PGInt4,  Nullable, PGDate, PGText)
 import Opaleye.Field (FieldNullable)
 import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
 -- import Data.Time (Day)
@@ -51,11 +51,11 @@ data Ad = Ad
   } deriving (Generic, GQLType)
 
 
-data Person' a b c d = Person {
+data Person' a b c = Person {
   id :: a
   , username :: b
   , personName :: c
-  , dob :: d
+  -- , dob :: d
   }deriving (Generic, GQLType, Show)
 
 data PersonArgs = PersonArgs
@@ -63,8 +63,8 @@ data PersonArgs = PersonArgs
     personId :: Int
   } deriving (Generic, GQLType)
 
-type Person = Person' Int Text Text (Maybe Day)
+type Person = Person' Int Text Text
 
-type PersonField = Person' (Field SqlInt4) (Field PGText) (Field PGText) (FieldNullable SqlDate)
+type PersonField = Person' (Field SqlInt4) (Field PGText) (Field PGText) 
 
 $(makeAdaptorAndInstance "pPerson" ''Person')

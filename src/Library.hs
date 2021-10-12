@@ -21,6 +21,9 @@ resolveCat = lift $ pure $ Category' {name = "category"}
 resolvePersons :: ResolverQ () IO [Person]
 resolvePersons = lift $ selectAllPersonsWithConn
 
+resolvePerson :: ResolverQ () IO Person
+resolvePerson = lift $ undefined 
+
 rootResolver :: RootResolver IO () Query Undefined Undefined
 rootResolver =
   RootResolver

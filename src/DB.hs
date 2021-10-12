@@ -3,7 +3,7 @@ module DB
 (
   -- runInsertPerson,
   runSelectAllPersons
-,selectAllPersonsWithConn) where
+,selectAllPersonsWithConn,selectPerson) where
 
 import RIO
 import Database.PostgreSQL.Simple (Connection, connect, ConnectInfo(..))
@@ -38,10 +38,9 @@ import Control.Arrow (returnA)
 --                                  , tableField "date"))
 
 personTable :: Table PersonField PersonField
-personTable = Table "person" (pPerson $ Person { id = requiredTableField "id"
+personTable = Table "person" (pPerson $ Person { id = tableField "id"
                                               , username = tableField "username"
-                                              , personName = tableField "name"
-                                              , dob = tableField "dob"})
+                                              , personName = tableField "name"})
 
 categoryTable :: Table (Field SqlInt4, Field Text, Field Text, Field SqlDate) (Field SqlInt4, Field Text, Field Text, Field SqlDate)
 categoryTable = Table "category" (p4 ( tableField "id"
@@ -81,12 +80,12 @@ insertPerson conn row =
       , iOnConflict = Nothing
       }
 
--- selectPerson :: Connection -> PersonArgs -> IO [PersonField]
--- selectPerson conn PersonArgs {personId} =
---   runSelect conn $ proc () -> do
---     row@(id, _, _, _) <- selectTable personTable -< ()
---     restrict -< (personId .== toFields id)
---     returnA -< row
+selectPerson :: Connection -> PersonArgs -> IO [Person]
+selectPerson conn args =
+  runSelect conn $ proc () -> do
+    row@(pid, _, _) <- (selectTable personTable) -< ()
+    restrict -< (pid .== O.toFields (personId args))
+    returnA -< row
 
 selectAllPersons :: Connection -> IO [Person]
 selectAllPersons conn =
