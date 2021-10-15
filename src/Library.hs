@@ -2,14 +2,23 @@ module Library where
 
 -- import Prelude
 import RIO
+    ( ($),
+      Applicative(pure),
+      Int,
+      IO,
+      (.),
+      (=<<),
+      MonadIO(liftIO),
+      MonadTrans(lift) )
 import qualified RIO.ByteString.Lazy as B
-import Models
-import Data.Morpheus.Types 
+import Models ( Person, Ad(..), Category'(..), Query(..) )
+import Data.Morpheus.Types
+    ( Undefined(..), ResolverQ, RootResolver(..) ) 
 -- import RIO.ByteString.Lazy (putStrLn)
 import Data.Morpheus (interpreter)
-import Web.Scotty
-import Models (Category'(Category'))
-import DB (selectAllPersonsWithConn)
+import Web.Scotty ( body, post, raw, scotty )
+import Models (Category', PersonArgs (personIdArg))
+import DB (selectAllPersonsWithConn, runPersonWithIdSelectWithConn)
 -- import Web.Scotty.Trans (post, raw, body)
 
 resolveAd :: ResolverQ () IO Ad
@@ -21,14 +30,18 @@ resolveCat = lift $ pure $ Category' {name = "category"}
 resolvePersons :: ResolverQ () IO [Person]
 resolvePersons = lift $ selectAllPersonsWithConn
 
-resolvePerson :: ResolverQ () IO Person
-resolvePerson = lift $ undefined 
+resolvePerson :: PersonArgs -> ResolverQ () IO [Person]
+resolvePerson = lift . runPersonWithIdSelectWithConn . personIdArg 
 
 rootResolver :: RootResolver IO () Query Undefined Undefined
 rootResolver =
   RootResolver
     {
-      queryResolver = Query {randomAd = resolveAd, randomCat = resolveCat, getPersons = resolvePersons}
+      queryResolver = Query { randomAd = resolveAd, 
+                              randomCat = resolveCat, 
+                              getPersons = resolvePersons
+                              , getPerson = resolvePerson
+                              }
     , mutationResolver = Undefined
     , subscriptionResolver = Undefined
     }

@@ -23,7 +23,6 @@ import Opaleye.SqlTypes (SqlInt4)
 import Data.Profunctor.Product (p4)
 import Opaleye.Internal.Table
 import Opaleye (Field, SqlDate, PGInt4,  Nullable, PGDate, PGText)
-import Opaleye.Field (FieldNullable)
 import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
 -- import Data.Time (Day)
 import Data.Data (Typeable)
@@ -34,7 +33,7 @@ data Query m = Query
   {
     randomAd :: m Ad
   , randomCat :: m Category'
-  -- , getPerson :: PersonArgs -> m Person
+  , getPerson :: PersonArgs -> m [Person]
   , getPersons :: m [Person]
   } deriving (Generic, GQLType)
 
@@ -52,7 +51,7 @@ data Ad = Ad
 
 
 data Person' a b c = Person {
-  id :: a
+  personId :: a
   , username :: b
   , personName :: c
   -- , dob :: d
@@ -60,7 +59,7 @@ data Person' a b c = Person {
 
 data PersonArgs = PersonArgs
   {
-    personId :: Int
+    personIdArg :: Int
   } deriving (Generic, GQLType)
 
 type Person = Person' Int Text Text
@@ -68,3 +67,4 @@ type Person = Person' Int Text Text
 type PersonField = Person' (Field SqlInt4) (Field PGText) (Field PGText) 
 
 $(makeAdaptorAndInstance "pPerson" ''Person')
+-- $(makeLen abbreviatedFields ''Person')
